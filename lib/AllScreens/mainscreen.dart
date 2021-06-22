@@ -37,6 +37,23 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   Set<Circle> circlesSet = {};
   double rideDetailsContainerHeight = 0;
   double searchContainerHeight = 300;
+  bool drawerOpen = true;
+
+resetApp(){
+  setState(() {
+
+    drawerOpen = true;
+
+    searchContainerHeight = 300.0;
+    rideDetailsContainerHeight = 240;
+    bottomPaddingOfMap = 230.0;
+  polylineSet.clear();
+  markersSet.clear();
+  circlesSet.clear();
+  pLineCoordinates.clear();
+  });
+  locatePosition();
+}
 
   void displayRideDetailsContainer() async {
     await getPlaceDirection();
@@ -44,6 +61,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
       searchContainerHeight = 0;
       rideDetailsContainerHeight = 240;
       bottomPaddingOfMap = 230.0;
+       drawerOpen = false;
     });
   }
 
@@ -172,11 +190,18 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
           ),
           //Hamburger button for drawer.
           Positioned(
-            top: 45.0,
+            top: 38.0,
             left: 22.0,
             child: GestureDetector(
               onTap: () {
-                scaffoldKey.currentState.openDrawer();
+
+                if(drawerOpen){
+                  scaffoldKey.currentState.openDrawer();
+
+                }
+                else{
+                  resetApp();
+                }
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -191,8 +216,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                     ]),
                 child: CircleAvatar(
                   backgroundColor: Colors.white,
-                  child: Icon(
-                    Icons.menu,
+                  child: Icon((drawerOpen)?
+                    Icons.menu: Icons.close,
                     color: Colors.black,
                   ),
                   radius: 20.0,
@@ -402,7 +427,8 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                                         fontFamily: "Bradley Hand"),
                                   ),
                                   Text(
-                                    tripDirectionsDetails.distanceText,
+
+                                    ((tripDirectionsDetails != null) ?tripDirectionsDetails.distanceText: ''),
                                     style: TextStyle(
                                         fontSize: 18.0, color: Colors.grey),
                                   ),
@@ -410,7 +436,9 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                               ),
                               Expanded(child: Container()),
                               Text(
-                                tripDirectionsDetails.distanceText,
+                                ((tripDirectionsDetails != null)
+                                    ? '\$${AssistantMethods.calculateFares(tripDirectionsDetails)}'
+                                    : ''),
                                 style:
                                     TextStyle(fontSize: 10, color: Colors.grey),
                               )
