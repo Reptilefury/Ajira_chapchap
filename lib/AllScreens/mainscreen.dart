@@ -78,10 +78,11 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
     };
     rideRequestRef.push().set(rideinfoMap);
   }
- void cancelRideRequest(){
-  rideRequestRef.remove();
 
+  void cancelRideRequest() {
+    rideRequestRef.remove();
   }
+
   void displayRequestRideContainer() {
     setState(() {
       requestRideContainerHeight = 250.0;
@@ -190,7 +191,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   ),
                 ),
               ),
-              Divider(height: 10, color: Colors.black54,),
+              Divider(
+                height: 10,
+                color: Colors.black54,
+              ),
               SizedBox(
                 height: 12.0,
               ),
@@ -201,7 +205,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   style: TextStyle(fontSize: 16.0),
                 ),
               ),
-              Divider(height: 10, color: Colors.black54,),
+              Divider(
+                height: 10,
+                color: Colors.black54,
+              ),
               ListTile(
                 leading: Icon(Icons.person),
                 title: Text(
@@ -209,7 +216,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                   style: TextStyle(fontSize: 16.0),
                 ),
               ),
-              Divider(height: 10, color: Colors.black54,),
+              Divider(
+                height: 10,
+                color: Colors.black54,
+              ),
               ListTile(
                 leading: Icon(Icons.info),
                 title: Text(
@@ -218,8 +228,10 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                 ),
               ),
               GestureDetector(
-                onTap: (){
-
+                onTap: () {
+                  FirebaseAuth.instance.signOut();
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, MainScreen.idScreen, (route) => false);
                 },
                 child: ListTile(
                   leading: Icon(Icons.info),
@@ -602,7 +614,7 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
                     height: 22.0,
                   ),
                   GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       cancelRideRequest();
                       resetApp();
                     },
