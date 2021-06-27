@@ -6,6 +6,7 @@ import 'package:ajira_chapchap/AllWidgets/Divider.dart';
 import 'package:ajira_chapchap/AllWidgets/progressDialog.dart';
 import 'package:ajira_chapchap/DataHandler/appData.dart';
 import 'package:ajira_chapchap/Models/directDetails.dart';
+import 'package:ajira_chapchap/configMaps.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -15,6 +16,9 @@ import 'package:provider/provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class MainScreen extends StatefulWidget {
   static const String idScreen = "mainScreen";
@@ -36,24 +40,73 @@ class _MainScreenState extends State<MainScreen> with TickerProviderStateMixin {
   Set<Marker> markersSet = {};
   Set<Circle> circlesSet = {};
   double rideDetailsContainerHeight = 0;
+  double requestRideContainerHeight = 0;
   double searchContainerHeight = 300;
   bool drawerOpen = true;
+  DatabaseReference rideRequestRef;
 
-resetApp(){
-  setState(() {
+  void initState() {
+    super.initState();
 
-    drawerOpen = true;
+    AssistantMethods.getCurrentOnlineUserInfo();
+  }
 
-    searchContainerHeight = 300.0;
-    rideDetailsContainerHeight = 240;
-    bottomPaddingOfMap = 230.0;
-  polylineSet.clear();
-  markersSet.clear();
-  circlesSet.clear();
-  pLineCoordinates.clear();
-  });
-  locatePosition();
-}
+  void saveRideRequest() {
+    rideRequestRef =
+        FirebaseDatabase.instance.reference().child("Ride Requests");
+    var pickUp = Provider.of<AppData>(context, listen: false).PickUpLocation;
+    var dropOff = Provider.of<AppData>(context, listen: false).dropOffLocation;
+
+    Map pickUpLocMap = {
+      "latitude": pickUp.latitude.toString(),
+      "longitude": pickUp.longitude.toString(),
+    };
+    Map dropOffLocMap = {
+      "latitude": dropOff.latitude.toString(),
+      "longitude": dropOff.longitude.toString(),
+    };
+    Map rideinfoMap = {
+      "worker_id ": "waiting",
+      "payment_method": "cash after services",
+      "pickup": pickUpLocMap,
+      "dropoff": dropOffLocMap,
+      "creared_at": DateTime.now().toString(),
+      "rider_name": usersCurrentInfo.name,
+      "rider_phone": usersCurrentInfo.phone,
+      "pickup_address": pickUp.placeName,
+      "dropoff_address": dropOff.placeName,
+    };
+    rideRequestRef.push().set(rideinfoMap);
+  }
+ void cancelRideRequest(){
+  rideRequestRef.remove();
+
+  }
+  void displayRequestRideContainer() {
+    setState(() {
+      requestRideContainerHeight = 250.0;
+      rideDetailsContainerHeight = 0;
+      requestRideContainerHeight = 0;
+      bottomPaddingOfMap = 230.0;
+      drawerOpen = true;
+    });
+    saveRideRequest();
+  }
+
+  resetApp() {
+    setState(() {
+      drawerOpen = true;
+
+      searchContainerHeight = 300.0;
+      rideDetailsContainerHeight = 240;
+      bottomPaddingOfMap = 230.0;
+      polylineSet.clear();
+      markersSet.clear();
+      circlesSet.clear();
+      pLineCoordinates.clear();
+    });
+    locatePosition();
+  }
 
   void displayRideDetailsContainer() async {
     await getPlaceDirection();
@@ -61,7 +114,7 @@ resetApp(){
       searchContainerHeight = 0;
       rideDetailsContainerHeight = 240;
       bottomPaddingOfMap = 230.0;
-       drawerOpen = false;
+      drawerOpen = false;
     });
   }
 
@@ -137,7 +190,7 @@ resetApp(){
                   ),
                 ),
               ),
-              DividerWidget(),
+              Divider(height: 10, color: Colors.black54,),
               SizedBox(
                 height: 12.0,
               ),
@@ -148,6 +201,7 @@ resetApp(){
                   style: TextStyle(fontSize: 16.0),
                 ),
               ),
+              Divider(height: 10, color: Colors.black54,),
               ListTile(
                 leading: Icon(Icons.person),
                 title: Text(
@@ -155,11 +209,24 @@ resetApp(){
                   style: TextStyle(fontSize: 16.0),
                 ),
               ),
+              Divider(height: 10, color: Colors.black54,),
               ListTile(
                 leading: Icon(Icons.info),
                 title: Text(
                   "About",
                   style: TextStyle(fontSize: 16.0),
+                ),
+              ),
+              GestureDetector(
+                onTap: (){
+
+                },
+                child: ListTile(
+                  leading: Icon(Icons.info),
+                  title: Text(
+                    "Sign Out",
+                    style: TextStyle(fontSize: 16.0),
+                  ),
                 ),
               ),
             ],
@@ -194,12 +261,9 @@ resetApp(){
             left: 22.0,
             child: GestureDetector(
               onTap: () {
-
-                if(drawerOpen){
+                if (drawerOpen) {
                   scaffoldKey.currentState.openDrawer();
-
-                }
-                else{
+                } else {
                   resetApp();
                 }
               },
@@ -216,8 +280,8 @@ resetApp(){
                     ]),
                 child: CircleAvatar(
                   backgroundColor: Colors.white,
-                  child: Icon((drawerOpen)?
-                    Icons.menu: Icons.close,
+                  child: Icon(
+                    (drawerOpen) ? Icons.menu : Icons.close,
                     color: Colors.black,
                   ),
                   radius: 20.0,
@@ -427,8 +491,9 @@ resetApp(){
                                         fontFamily: "Bradley Hand"),
                                   ),
                                   Text(
-
-                                    ((tripDirectionsDetails != null) ?tripDirectionsDetails.distanceText: ''),
+                                    ((tripDirectionsDetails != null)
+                                        ? tripDirectionsDetails.distanceText
+                                        : ''),
                                     style: TextStyle(
                                         fontSize: 18.0, color: Colors.grey),
                                   ),
@@ -480,7 +545,7 @@ resetApp(){
                         padding: EdgeInsets.symmetric(horizontal: 16.0),
                         child: RaisedButton(
                           onPressed: () {
-                            print("clicked");
+                            displayRequestRideContainer();
                           },
                           color: Theme.of(context).accentColor,
                           child: Padding(
@@ -510,7 +575,112 @@ resetApp(){
                 ),
               ),
             ),
-          )
+          ),
+
+          Positioned(
+            bottom: 0.0,
+            left: 0.0,
+            right: 0.0,
+            child: Container(
+              //positioned widget
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(16.0),
+                      topRight: Radius.circular(16.0)),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                        spreadRadius: 0.5,
+                        blurRadius: 16.0,
+                        color: Colors.black54,
+                        offset: Offset(0.7, 0.7))
+                  ]),
+              height: requestRideContainerHeight,
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 22.0,
+                  ),
+                  GestureDetector(
+                    onTap: (){
+                      cancelRideRequest();
+                      resetApp();
+                    },
+                    child: Container(
+                      height: 60.0,
+                      width: 60.0,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(26.0),
+                        border: Border.all(width: 2.0, color: Colors.grey[300]),
+                      ),
+                      child: Icon(
+                        Icons.close,
+                        size: 26.0,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10.0,
+                  ),
+                  Container(
+                    width: 10,
+                  ),
+                  Container(
+                    width: double.infinity,
+                    child: Text(
+                      "Cancel Work Ticket",
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ColorizeAnimatedTextKit(
+                      onTap: () {
+                        print("Tap Event");
+                      },
+                      text: [
+                        "Requesting a work ticket..",
+                        "Please wait...",
+                        "Finding a worker for you...",
+                      ],
+                      textStyle: TextStyle(
+                          fontSize: 55.0, fontFamily: "images/Signatra.ttf"),
+                      colors: [
+                        Colors.green,
+                        Colors.purple,
+                        Colors.green,
+                        Colors.blue,
+                        Colors.yellow,
+                        Colors.red,
+                      ],
+                      textAlign: TextAlign.center,
+
+                      //  alignment: AlignmentDirectional.topStart,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 22.0,
+                  ),
+                  /*
+                  Container(
+                    height: 60.0,
+                    width: 60.0,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(26.0),
+                      border: Border.all(width: 2.0, color: Colors.black54),
+                    ),
+                    child: Icon(
+                      Icons.close,
+                      size: 26.0,
+                    ),
+                  ),
+                 */
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

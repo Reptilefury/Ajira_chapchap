@@ -9,6 +9,7 @@ import 'package:ajira_chapchap/main.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:firebase_database/firebase_database.dart';
 
 import '../main.dart';
@@ -130,7 +131,11 @@ class LoginScreen extends StatelessWidget {
       ),
     );
   }
+ /* final databaseRef = FirebaseDatabase.instance.reference(); //database reference object
 
+  void addData(String data) {
+    databaseRef.push().set({'name': data, 'comment': 'A good season'});
+  }*/
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   void loginAndAuthenticateUser(BuildContext context) async {
