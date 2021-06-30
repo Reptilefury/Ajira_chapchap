@@ -190,7 +190,7 @@ class RegistrationScreen extends StatelessWidget {
     displayToastMessage  ("Error:" + errMsg.toString(), context);
     }))
         .user;
-    if (User != null) {
+    if (firebaseUser != null) {
       usersRef.child(firebaseUser.uid);
       Map userDataMap = {
         "name": nameTextEditingController.text.trim(),
