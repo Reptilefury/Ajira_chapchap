@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "608335439485",
+    "firebase_url": "https://final-project-1-df393-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "final-project-1-df393",
     "storage_bucket": "final-project-1-df393.appspot.com"
   },
@@ -13,6 +14,51 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "608335439485-sfsdo10qgu06i7ocg9rqn6980t08d136.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ajira_chapchap",
+            "certificate_hash": "a3e99637c222093f2f7d8354fa6de1d1b0ede1f1"
+          }
+        },
+        {
+          "client_id": "608335439485-7bcr33pd483poraptjvfa0q5daobufc2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBl_pT_2EGbXg85O40Wmi5VtwSUYLzzXN0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "608335439485-7bcr33pd483poraptjvfa0q5daobufc2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:608335439485:android:e1663333635c929cd8f314",
+        "android_client_info": {
+          "package_name": "com.ajirachachap_employees"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "608335439485-n1b1st5urp4dnecfqprk20f6h3sh8hhl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ajirachachap_employees",
+            "certificate_hash": "a3e99637c222093f2f7d8354fa6de1d1b0ede1f1"
+          }
+        },
         {
           "client_id": "608335439485-7bcr33pd483poraptjvfa0q5daobufc2.apps.googleusercontent.com",
           "client_type": 3
